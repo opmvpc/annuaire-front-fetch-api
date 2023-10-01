@@ -1,28 +1,36 @@
 import * as bootstrap from 'bootstrap';
 import '../style.scss';
-import { data } from '../data';
 import { nav } from '../nav';
 
-const detailsPersonne = () => {
+const detailsPersonne = async () => {
   // récupération des paramètres GET de l'url
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const personneId = urlParams.get('id') ?? 1;
   console.log(personneId);
 
-  // on cherche la personne qui possède l'id trouvé dans l'url
-  const personne = data.find((personne) => {
-    return personne.id === Number.parseInt(personneId);
-  });
+  // récupération des données
+  const url = new URL(import.meta.env.VITE_API_URL);
+  url.pathname = '/api/personnes/' + personneId;
+  const reponse = await fetch(url);
+  const personne = await reponse.json();
+
   console.log(personne);
+
+  // url de l'image
+  const imgUrl = new URL(import.meta.env.VITE_API_URL);
+  imgUrl.pathname = personne.avatar;
 
   return `
       <div class="card col col-sm-10 col-md-8 col-xl-6 mx-auto">
-        <img src="${personne.avatar}" class="card-img-top" alt="avatar de ${personne.prenom} ${personne.nom}">
+      <img src="${imgUrl}" crossorigin class="card-img-top" alt="avatar de ${personne.prenom} ${personne.nom}">
         <div class="card-body">
           <h5 class="card-title">${personne.prenom} ${personne.nom}</h5>
+          <h6 class="card-title">${personne.date_de_naissance}</h6>
+          <h6 class="card-title">${personne.numero_de_telephone}</h6>
+          <h6 class="card-title">${personne.adresse_email}</h6>
           <p class="card-text">
-            ...
+            ${personne.description}
           </p>
         </div>
       </div>
@@ -34,7 +42,7 @@ document.querySelector('#app').innerHTML = `
     ${nav}
 
     <div class="container-fluid my-4">
-      ${detailsPersonne()}
+      ${await detailsPersonne()}
     </div>
   </main>
 `;
