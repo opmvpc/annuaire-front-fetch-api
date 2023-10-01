@@ -35,7 +35,7 @@ const listePersonnes = () => {
   return html;
 };
 
-const personnes = await getPersonnes();
+let personnes = await getPersonnes();
 
 document.querySelector('#app').innerHTML = `
   <main>
@@ -46,13 +46,14 @@ document.querySelector('#app').innerHTML = `
     </div
 
     <div class="container-fluid my-4">
-      <div class="d-flex gap-3 flex-wrap justify-content-center">
+      <div id="liste-personnes" class="d-flex gap-3 flex-wrap justify-content-center">
         ${listePersonnes()}
       </div>
     </div>
   </main>
 `;
 
+// recherche
 document.querySelector('#search-input').addEventListener('input', async (e) => {
   const url = new URL(import.meta.env.VITE_API_URL);
   url.pathname = '/api/personnes/search';
@@ -61,5 +62,11 @@ document.querySelector('#search-input').addEventListener('input', async (e) => {
   const results = await reponse.json();
   console.log(results);
 
-  personnes = results;
+  if (!results || results.length === 0 || results.statusCode === 500) {
+    personnes = await getPersonnes();
+  } else {
+    personnes = results;
+  }
+  const liste = document.querySelector('#liste-personnes');
+  liste.innerHTML = listePersonnes();
 });
