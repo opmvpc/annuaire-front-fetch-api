@@ -42,7 +42,7 @@ document.querySelector('#app').innerHTML = `
     ${nav}
 
     <div class="container-fluid my-4">
-      <input type="text" class="form-control" id="search-input" />
+      <input type="text" class="form-control" id="search-input" placeholder="Recherchez dans l'annuaire" />
     </div
 
     <div class="container-fluid my-4">
