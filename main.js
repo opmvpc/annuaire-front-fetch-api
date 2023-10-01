@@ -42,9 +42,24 @@ document.querySelector('#app').innerHTML = `
     ${nav}
 
     <div class="container-fluid my-4">
+      <input type="text" class="form-control" id="search-input" />
+    </div
+
+    <div class="container-fluid my-4">
       <div class="d-flex gap-3 flex-wrap justify-content-center">
         ${listePersonnes()}
       </div>
     </div>
   </main>
 `;
+
+document.querySelector('#search-input').addEventListener('input', async (e) => {
+  const url = new URL(import.meta.env.VITE_API_URL);
+  url.pathname = '/api/personnes/search';
+  url.searchParams.set('q', e.target.value ?? '');
+  const reponse = await fetch(url);
+  const results = await reponse.json();
+  console.log(results);
+
+  personnes = results;
+});
