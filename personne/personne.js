@@ -2,7 +2,7 @@ import * as bootstrap from 'bootstrap';
 import '../style.scss';
 import { nav } from '../nav';
 
-const detailsPersonne = async () => {
+const getPersonne = async () => {
   // récupération des paramètres GET de l'url
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -15,8 +15,10 @@ const detailsPersonne = async () => {
   const reponse = await fetch(url);
   const personne = await reponse.json();
 
-  console.log(personne);
+  return personne;
+};
 
+const detailsPersonne = () => {
   // url de l'image
   const imgUrl = new URL(import.meta.env.VITE_API_URL);
   imgUrl.pathname = personne.avatar;
@@ -37,12 +39,14 @@ const detailsPersonne = async () => {
     `;
 };
 
+const personne = await getPersonne();
+
 document.querySelector('#app').innerHTML = `
   <main>
     ${nav}
 
     <div class="container-fluid my-4">
-      ${await detailsPersonne()}
+      ${detailsPersonne()}
     </div>
   </main>
 `;
